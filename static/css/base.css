@@ -1,0 +1,99 @@
+/*Fondo imagen https://alvarotrigo.com/blog/animated-backgrounds-css/*/
+/*color de imagen https://ideakreativa.net/efectos-de-animacion-de-texto-css-ejemplos/*/
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+CL:wght@100..400&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Source+Code+Pro:200');
+
+body {
+    background-image: url('../img/rojo.png');
+    background-size: cover;
+    background-attachment: fixed; /* Hace que el fondo se mantenga fijo al hacer scroll */
+    animation: slidein 30s infinite alternate;
+}
+
+@-webkit-keyframes slidein {
+from {background-position: top; background-size:2000px; }
+to {background-position: -100px 0px;background-size:1750px;}
+}
+
+@keyframes slidein {
+from {background-position: top;background-size:2000px; }
+to {background-position: -100px 0px;background-size:1750px;}
+
+}
+
+
+.animate-charcter
+{
+   text-transform: uppercase;
+  background-image: linear-gradient(
+    -225deg,
+    #231557 0%,
+    #44107a 29%,
+    #ff1361 67%,
+    #fff800 100%
+  );
+  font-family: "Playwrite CL", cursive;
+  font-optical-sizing: auto;
+  font-weight: weight;
+  font-style: normal;
+  font-family: "Bodoni Moda SC", serif;
+  font-optical-sizing: auto;
+  font-weight: weight;
+  font-style: normal;
+  background-size: auto auto;
+  background-clip: border-box;
+  background-size: 200% auto;
+  color: #fff;
+  background-clip: text;
+  -text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textclip 2s linear infinite;
+  display: inline-block;
+      font-size: 100px;
+}
+
+@keyframes textclip {
+    to {
+        background-position: 200% center;
+    }
+}
+
+/* Centrar contenido */
+.center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    position: relative;
+    z-index: 1;
+}
+
+.center h1 {
+    color: white;
+    font-family: 'Source Code Pro', monospace;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+/* Ajuste del navbar */
+.navbar, .footer {
+    background: rgba(255, 255, 255, 0.85); /* Fondo semitransparente */
+    backdrop-filter: blur(10px); /* Efecto de desenfoque */
+}
+
+/* Ajustes para pantallas pequeñas */
+@media (max-width: 768px) {
+    .animate-charcter {
+        font-size: 2.5rem;
+    }
+    
+    .product-item img {
+        height: 150px;
+    }
+
+    body {
+        background-size: 2000px;
+    }
+}

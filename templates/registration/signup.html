@@ -1,0 +1,26 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    {% load static %}
+
+    <!-- Enlace al archivo CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <section>
+        <!-- Formulario de inicio de sesión -->
+        <form method="post">
+            {% csrf_token %}
+            {{ form }}
+        <button type="submit" class="btn btn-primary">Registrarse</button>
+        <div class="register">
+            <p>¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesion</a></p>
+        </div>
+        </form>
+    </section>
+</body>
+</html>

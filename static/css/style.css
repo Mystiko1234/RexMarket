@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-image: url('../img/red1.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: white; /* Color de texto predeterminado en blanco */
+}
+
+section {
+    position: relative;
+    max-width: 400px;
+    background: rgba(255, 255, 255, 0.2); /* Fondo con opacidad ligera para mejorar la visibilidad */
+    backdrop-filter: blur(5px); /* Más desenfoque para mayor visibilidad */
+    border: 2px solid rgba(255, 255, 255, 0.3); /* Borde con mayor visibilidad */
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    padding: 2rem 3rem;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Sombra sutil para resaltar el formulario */
+}
+
+h1 {
+    font-size: 2rem;
+    color: white; /* Título en blanco */
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.inputbox {
+    position: relative;
+    margin: 30px 0;
+    max-width: 310px;
+    border-bottom: 2px solid white; /* Borde blanco */
+}
+
+.inputbox label {
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+    color: white; /* Color de texto blanco para las etiquetas */
+    font-size: 1rem;
+    pointer-events: none;
+    transition: all 0.5s ease-in-out;
+}
+
+.inputbox input {
+    width: 100%;
+    height: 60px;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    padding: 0 35px 0 5px;
+    color: white; /* Texto blanco dentro del campo */
+    border-bottom: 2px solid white; /* Borde inferior blanco */
+}
+
+.inputbox input:focus ~ label,
+.inputbox input:not(:placeholder-shown) ~ label {
+    top: -10px;
+    font-size: 0.9rem;
+    color: #FFD700; /* Cambiar el color de la etiqueta a dorado cuando se enfoca */
+}
+
+.inputbox ion-icon {
+    position: absolute;
+    right: 8px;
+    color: white; /* Icono blanco */
+    font-size: 1.2rem;
+    top: 20px;
+}
+
+.forget label {
+    display: flex;
+    align-items: center;
+}
+
+.forget label input {
+    margin-right: 3px;
+}
+
+.forget a {
+    color: white; /* Enlace en blanco */
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.forget a:hover {
+    text-decoration: underline;
+}
+
+button {
+    width: 100%;
+    height: 40px;
+    border-radius: 40px;
+    background: #FFD700; /* Botón con color dorado */
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.4s ease;
+    color: black; /* Texto del botón en negro para contraste */
+}
+
+button:hover {
+    background-color: #FF6347; /* Cambia a un rojo más suave al pasar el mouse */
+    color: white; /* Texto blanco en hover */
+}
+
+.register {
+    font-size: 0.9rem;
+    color: white; /* Texto de registro en blanco */
+    text-align: center;
+    margin: 25px 0 10px;
+}
+
+.register p a {
+    text-decoration: none;
+    color: #FFD700; /* Enlace dorado */
+    font-weight: 600;
+}
+
+.register p a:hover {
+    text-decoration: underline;
+}

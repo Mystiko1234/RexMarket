@@ -1,0 +1,54 @@
+{% extends "base/base.html" %}
+
+{% block titulo %}
+    Editar Producto: {{ producto.nombre }}
+{% endblock %}
+
+{% block contenido %}
+
+
+    <div class="container py-5">
+        <h1 class="text-center mb-4">Editar Producto: <span class="text-primary">{{ producto.nombre }}</span></h1>
+        
+        <!-- Formulario de edición -->
+        <div class="card shadow-lg">
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <!-- Mostrar el formulario con clases de Bootstrap -->
+                    <div class="mb-3">
+                        <label for="id_nombre" class="form-label">Nombre del Producto</label>
+                        {{ form.nombre }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_descripcion" class="form-label">Descripción</label>
+                        {{ form.descripcion }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_precio" class="form-label">Precio</label>
+                        {{ form.precio }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_imagen" class="form-label">Imagen</label>
+                        {{ form.imagen }}
+                    </div>
+                    
+                    <!-- Botón para enviar el formulario -->
+                    <button type="submit" class="btn btn-success w-100 mt-3">Actualizar Producto</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Botón para volver al detalle del producto -->
+        <div class="text-center mt-4">
+            <a href="{% url 'detalle_producto' producto.id %}" class="btn btn-secondary">Volver al detalle</a>
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'home' %}" class="btn btn-secondary">Volver a pagina principal</a>
+        </div>
+    </div>
+{% endblock %}

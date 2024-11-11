@@ -1,0 +1,50 @@
+{% extends "base/base.html" %}
+
+{% block titulo %}
+    Detalles del Producto
+{% endblock %}
+
+{% block contenido %}
+    <div class="container py-5">
+        <!-- Card principal con color plomo -->
+        <div class="card shadow-sm" style="background-color: #dee4e9; color: rgb(0, 0, 0);">
+            <div class="card-body">
+                <!-- Título del Producto -->
+                <h1 class="text-center mb-4">{{ producto.nombre }}</h1>
+
+                <!-- Imagen del Producto -->
+                <div class="text-center mb-4">
+                    {% if producto.imagen %}
+                        <img src="{{ producto.imagen.url }}" class="img-fluid rounded" alt="{{ producto.nombre }}">
+                    {% else %}
+                        <p class="text-muted">No hay imagen disponible para este producto.</p>
+                    {% endif %}
+                </div>
+
+                <!-- Descripción del Producto -->
+                <p><strong>Descripción:</strong> {{ producto.descripcion }}</p>
+                <p><strong>Precio:</strong> ${{ producto.precio }}</p>
+
+                <!-- Formulario de mensaje -->
+                {% if not producto.vendedor == user and not user.is_superuser %}
+                    <div class="mt-4">
+                        <h5 class="card-title">Enviar mensaje al vendedor</h5>
+                        <form method="POST" action="{% url 'mensajeria' producto_id=producto.id %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="mensaje" class="form-label">Tu Mensaje</label>
+                                <textarea name="mensaje" id="mensaje" class="form-control" rows="4" placeholder="Escribe tu mensaje aquí..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Enviar mensaje</button>
+                        </form>
+                    </div>
+                {% endif %}
+
+                <!-- Botón para volver a la tienda -->
+                <div class="text-center mt-4">
+                    <a href="{% url 'home' %}" class="btn btn-secondary">Volver a la tienda</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
