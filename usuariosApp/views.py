@@ -35,7 +35,7 @@ def publicar_producto(request):
 
 def lista_productos(request):
     productos = Producto.objects.all()
-    paginator = Paginator(productos, 9)
+    paginator = Paginator(productos, 21)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'index.html', {

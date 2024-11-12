@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 from telnetlib import LOGOUT
 
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = BASE_DIR / 'templates'
@@ -121,6 +122,8 @@ USE_I18N = True
 USE_TZ = True
 
 
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
@@ -149,3 +152,7 @@ CHANNEL_LAYERS = {
         },
     },
 }
+MEDIA_URL = '/productos/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'productos/')
+
+

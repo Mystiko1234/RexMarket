@@ -36,6 +36,10 @@
                         <label for="id_imagen" class="form-label">Imagen</label>
                         {{ form.imagen }}
                     </div>
+                    <div class="mb-3">
+                        <label for="id_categorias" class="form-label">Categorías</label>
+                        {{ form.categoria }}
+                    </div>
                     
                     <!-- Botón para enviar el formulario -->
                     <button type="submit" class="btn btn-success w-100 mt-3">Actualizar Producto</button>
@@ -51,4 +55,23 @@
             <a href="{% url 'home' %}" class="btn btn-secondary">Volver a pagina principal</a>
         </div>
     </div>
+    <script>
+        const inputPrecio = document.getElementById('id_precio');
+        
+        inputPrecio.addEventListener('input', function() {
+            // Eliminar todos los caracteres que no sean números o comas
+            let valor = this.value.replace(/[^\d,]/g, '');
+    
+            // Reemplazar comas ya existentes con puntos para evitar duplicados
+            valor = valor.replace(/,/g, '');
+    
+            // Agregar el separador de miles cada 3 dígitos
+            valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    
+            // Asignar el valor al campo de entrada
+            this.value = valor;
+        });
+    </script>
+    
+    
 {% endblock %}

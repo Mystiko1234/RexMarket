@@ -21,6 +21,9 @@ from django.urls import path, include
 from django.views.generic.base import TemplateView
 from usuariosApp.views import publicar_producto, lista_productos,editar_producto, eliminar_producto, detalle_producto, mensajeria
 from usuariosApp.views import SignUpView
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 
 urlpatterns = [
@@ -36,3 +39,5 @@ urlpatterns = [
 
 ]
 
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

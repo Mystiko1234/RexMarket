@@ -4,7 +4,7 @@
 @import url('https://fonts.googleapis.com/css?family=Source+Code+Pro:200');
 
 body {
-    background-image: url('../img/rojo.png');
+    background-image: url('../img/red1.png');
     background-size: cover;
     background-attachment: fixed; /* Hace que el fondo se mantenga fijo al hacer scroll */
     animation: slidein 30s infinite alternate;

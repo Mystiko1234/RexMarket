@@ -1,16 +1,79 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Publicar Producto</button>
-    </form>
+{% extends "base/base.html" %}
+
+{% block titulo %}
+    Publicar Producto
+{% endblock %}
+
+{% block contenido %}
+<div class="container py-5">
+    <div class="card shadow-lg" style="background-color: #f2f2f2;">
+        <div class="card-header text-center">
+            <h2>Publicar Producto</h2>
+        </div>
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- Nombre del Producto -->
+                <div class="mb-3">
+                    <label for="id_nombre" class="form-label">Nombre del Producto</label>
+                    {{ form.nombre }}
+                </div>
+
+                <!-- Descripción del Producto -->
+                <div class="mb-3">
+                    <label for="id_descripcion" class="form-label">Descripción</label>
+                    {{ form.descripcion }}
+                </div>
+
+                <!-- Precio del Producto -->
+                <div class="mb-3">
+                    <label for="id_precio" class="form-label">Precio (CLP)</label>
+                    {{ form.precio }}
+                </div>
+
+                <!-- Categoría del Producto -->
+                <div class="mb-3">
+                    <label for="id_categoria" class="form-label">Categoría</label>
+                    {{ form.categoria }}
+                </div>
+
+                <!-- Imagen del Producto -->
+                <div class="mb-3">
+                    <label for="id_imagen" class="form-label">Imagen</label>
+                    {{ form.imagen }}
+                </div>
+
+                <!-- Botón para enviar el formulario -->
+                <button type="submit" class="btn btn-success w-100">Publicar Producto</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Botón para volver a la tienda -->
+    <div class="text-center mt-4">
+        <a href="{% url 'home' %}" class="btn btn-secondary">Volver a la tienda</a>
+    </div>
+</div>
+
+<script>
+    const inputPrecio = document.getElementById('id_precio');
     
-</body>
-</html>
+    inputPrecio.addEventListener('input', function() {
+        // Eliminar todos los caracteres que no sean números o comas
+        let valor = this.value.replace(/[^\d,]/g, '');
+
+        // Reemplazar comas ya existentes con puntos para evitar duplicados
+        valor = valor.replace(/,/g, '');
+
+        // Agregar el separador de miles cada 3 dígitos
+        valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+        // Asignar el valor al campo de entrada
+        this.value = valor;
+    });
+</script>
+
+
+
+{% endblock %}

@@ -24,6 +24,7 @@
                 <!-- Descripción del Producto -->
                 <p><strong>Descripción:</strong> {{ producto.descripcion }}</p>
                 <p><strong>Precio:</strong> ${{ producto.precio }}</p>
+                <p><strong>Categoria:</strong>{{producto.categoria}}</p>
 
                 <!-- Formulario de mensaje -->
                 {% if not producto.vendedor == user and not user.is_superuser %}
