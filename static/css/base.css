@@ -3,23 +3,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Playwrite+CL:wght@100..400&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Source+Code+Pro:200');
 
-body {
-    background-image: url('../img/red1.png');
-    background-size: cover;
-    background-attachment: fixed; /* Hace que el fondo se mantenga fijo al hacer scroll */
-    animation: slidein 30s infinite alternate;
-}
-
-@-webkit-keyframes slidein {
-from {background-position: top; background-size:2000px; }
-to {background-position: -100px 0px;background-size:1750px;}
-}
-
-@keyframes slidein {
-from {background-position: top;background-size:2000px; }
-to {background-position: -100px 0px;background-size:1750px;}
-
-}
 
 
 .animate-charcter
@@ -59,18 +42,8 @@ to {background-position: -100px 0px;background-size:1750px;}
     }
 }
 
-/* Centrar contenido */
-.center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    position: relative;
-    z-index: 1;
-}
 
-.center h1 {
+ h1 {
     color: white;
     font-family: 'Source Code Pro', monospace;
     text-transform: uppercase;
