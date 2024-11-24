@@ -19,10 +19,11 @@ from tkinter.font import names
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic.base import TemplateView
-from usuariosApp.views import publicar_producto, lista_productos,editar_producto, eliminar_producto, detalle_producto, mensajeria
+from usuariosApp.views import publicar_producto, lista_productos,editar_producto, eliminar_producto, detalle_producto,VerifyEmailView, destacar_producto
 from usuariosApp.views import SignUpView
 from django.conf import settings
 from django.conf.urls.static import static
+
 
 
 
@@ -35,9 +36,9 @@ urlpatterns = [
     path('editar/<int:pk>/', editar_producto, name='editar_producto'),  # Ruta para editar producto
     path('eliminar/<int:pk>/', eliminar_producto, name='eliminar_producto'),  # Ruta para eliminar producto
     path('producto/<int:producto_id>/', detalle_producto, name='detalle_producto'),
-    path('mensajeria/<int:producto_id>/', mensajeria, name='mensajeria'),
-
-]
+    path('verify-email/', VerifyEmailView.as_view(), name='verify_email'),
+    path('destacar/<int:producto_id>/', destacar_producto, name='destacar_producto'),
+ ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

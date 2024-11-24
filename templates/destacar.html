@@ -1,0 +1,30 @@
+{% extends "base/base.html" %}
+
+{% block titulo %}
+Destacar Producto
+{% endblock %}
+
+{% block contenido %}
+<div class="container mt-5">
+    <h1 class="text-center">Destacar Producto</h1>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5>Producto: {{ producto.nombre }}</h5>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="duracion" class="form-label">Selecciona la duración:</label>
+                    <select name="duracion" id="duracion" class="form-select">
+                        <option value="1">1 día - $490</option>
+                        <option value="7">7 días - $2990</option>
+                        <option value="14">14 días - $4990</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Confirmar y Destacar</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

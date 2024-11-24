@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="utf-8" />
@@ -7,95 +7,174 @@
     <title>{% block titulo %}Archivo Base{% endblock %}</title>
     {% load static %}
 
-    
+
     <!-- Favicon-->
     <link rel="icon" type="image/x-icon" href="{% static 'img/rexmarket.png' %}" />
 
     <!-- Bootstrap icons-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
 
-    <!-- Core theme CSS (includes Bootstrap)-->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+
+    
 </head>
 
 <body>
-    
-    
-
     <!-- Navigation-->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
-        <div class="container px-4 px-lg-5">
-           <a href="{% url 'home' %}" > <img src="{% static 'img/rexmarket.png' %}"  alt="RexMarket" style="width: 50px; height: 50px;"></a> 
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+    <nav class="navbar navbar-expand-lg navbar-light  sticky-top" id="nav">
+        <div class="container">
+            <!-- Logo -->
+            <a href="{% url 'home' %}" class="navbar-brand d-flex align-items-center">
+                <img src="{% static 'img/rexmarket.png' %}" alt="RexMarket" class="me-2" style="width: 50px; height: 50px;">
+            </a>
+    
+            <!-- Botón de menú colapsable -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+    
+            <!-- Contenido del Navbar -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav  d-flex align-items-center" style="width: 80%;">
+                    <!-- Mensajes -->
                     <li class="nav-item">
                         <a class="nav-link" href="#">
                             Mensajes
                             {% if mensajes_no_leidos %}
-                                <span class="badge bg-danger">{{ mensajes_no_leidos }}</span> <!-- Muestra el número de mensajes no leídos -->
+                            <span class="badge bg-danger">{{ mensajes_no_leidos }}</span>
                             {% endif %}
                         </a>
                     </li>
+                
+                    <!-- Dropdown de Mensajes -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">All Products</a></li>
+                        <a class="nav-link dropdown-toggle" id="messagesDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-chat-text"></i>
+                            {% if mensajes_no_leidos %}
+                            <span class="badge bg-danger">{{ mensajes_no_leidos }}</span>
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="messagesDropdown">
                             <li>
-                                <hr class="dropdown-divider" />
+                                <a href="#" class="dropdown-item">
+                                    <div class="d-flex">
+                                        <img src="https://via.placeholder.com/50" alt="User Avatar" class="rounded-circle me-3" style="width: 50px;">
+                                        <div>
+                                            <h6 class="mb-0">Brad Diesel</h6>
+                                            <p class="text-muted small mb-0">Call me whenever you can...</p>
+                                            <small class="text-muted"><i class="bi bi-clock"></i> 4 Hours Ago</small>
+                                        </div>
+                                    </div>
+                                </a>
                             </li>
-                            <li><a class="dropdown-item" href="#">Popular Items</a></li>
-                            <li><a class="dropdown-item" href="#">New Arrivals</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a href="#" class="dropdown-item dropdown-footer">Ver todos los mensajes</a></li>
                         </ul>
                     </li>
+                
+                    <!-- Contenedor para centrar la barra de búsqueda y el filtro -->
+                    <div class="d-flex flex-grow-1 justify-content-center align-items-center">
+                        <!-- Barra de búsqueda centrada -->
+                        <li class="nav-item w-50">
+                            <form class="w-100">
+                                <input 
+                                    class="form-control me-2" 
+                                    type="search" 
+                                    id="barra-busqueda" 
+                                    placeholder="Buscar productos..." 
+                                    aria-label="Search" 
+                                />
+                            </form>
+                        </li>
+                
+                        <!-- Filtro a la derecha -->
+                        <li class="nav-item ms-3">
+                            <div class="dropdown">
+                                <!-- Ícono para abrir el menú -->
+                                <button class="btn dropdown-toggle d-flex align-items-center" type="button" id="dropdownFilters" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-funnel me-2"></i> Filtros
+                                </button>
+                
+                                <!-- Contenido del menú -->
+                                <ul class="dropdown-menu" aria-labelledby="dropdownFilters">
+                                    <li>
+                                        <!-- Filtro de categorías -->
+                                        <form method="get" action="{% url 'home' %}">
+                                            <label class="dropdown-header">Categorías</label>
+                                            <select name="categoria" class="form-select mb-2" onchange="this.form.submit()">
+                                                <option value="">Todas las categorías</option>
+                                                {% for categoria_codigo, categoria_nombre in categorias %}
+                                                <option value="{{ categoria_codigo }}" {% if categoria_seleccionada == categoria_codigo %}selected{% endif %}>
+                                                    {{ categoria_nombre }}
+                                                </option>
+                                                {% endfor %}
+                                            </select>
+                                            
+                                            <!-- Filtro de ordenar por -->
+                                            <label class="dropdown-header">Ordenar por</label>
+                                            <select name="ordenar_por" class="form-select mb-2" onchange="this.form.submit()">
+                                                <option value="">Seleccionar...</option>
+                                                <option value="precio_asc" {% if ordenar_por == 'precio_asc' %}selected{% endif %}>Precio: Menor a Mayor</option>
+                                                <option value="precio_desc" {% if ordenar_por == 'precio_desc' %}selected{% endif %}>Precio: Mayor a Menor</option>
+                                                <option value="valoracion" {% if ordenar_por == 'valoracion' %}selected{% endif %}>Mejor Valorados</option>
+                                            </select>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </div>
                 </ul>
-                <div class="d-flex gap-2">
+                
+    
+                <!-- Perfil de usuario -->
+                <div class="d-flex align-items-center">
                     {% if user.is_authenticated %}
-                    <h3>Bienvenido, {{ user.first_name }}</h3>
-                    <div class="dropdown text-end">
-                        <!-- Avatar del usuario -->
-                        <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <!-- Imagen de perfil del usuario -->
-                            <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="{% static 'img/icono.png' %}" alt="Avatar" class="rounded-circle me-2" style="width: 40px;">
+                            <span style="color: black;">{{ user.first_name }}</span>
                         </a>
-
-                        <!-- Menú desplegable -->
-                        <ul class="dropdown-menu text-small">
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu" >
                             <li><a class="dropdown-item" href="{% url 'publicar_producto' %}">Publicar Producto</a></li>
                             <li><a class="dropdown-item" href="#">Configuración</a></li>
                             <li><a class="dropdown-item" href="#">Perfil</a></li>
+                            
+                            <li><hr class="dropdown-divider"></li>
                             <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li>
-                                <!-- Cerrar sesión -->
-                                <form action="{% url 'logout' %}" method="post">
-                                    {% csrf_token %}
-                                    <button type="submit" class="dropdown-item text-danger" style="border: none; background: none;">Cerrar sesión</button>
-                                </form>
+                                <button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                                    Cerrar sesión
+                                  </button>
                             </li>
                         </ul>
                     </div>
-
                     {% else %}
-                    <!-- Si el usuario no está autenticado, mostramos los botones de Iniciar sesión y Registrarse -->
-                    <a href="{% url 'login' %}" class="btn btn-outline-primary">Iniciar Sesión</a>
-                    <a href="{% url 'signup' %}" class="btn btn-outline-success">Registrarse</a>
+                    <a href="{% url 'login' %}" class="btn btn-outline-primary ">Iniciar Sesion</a>
+                    <a href="{% url 'signup' %}" class="btn btn-primary ms-2">Registrarse</a>
+
                     {% endif %}
                 </div>
             </div>
         </div>
     </nav>
 
+   
+
     <!-- Header-->
-    <header class="bg-black py-5 ms-5 me-5">
-        <div class="container px-4 px-lg-5 my-3">
+    <header class="py-3 ms-4 me-4 rounded-4 shadow-lg">
+        <div class="container px-4 px-lg-5 my-4">
             <div class="text-center text-white">
-                <h1 class="animate-charcter display-4 fw-bolder">RexMarket</h1>
-                <p class="lead fw-normal text-white-50 mb-0">Emprende con confiaza, Crece sin limites</p>
+                <!-- Título con animación -->
+                <h1 class="animate-charcter display-4 fw-bolder" style="letter-spacing: 2px;">
+                    <span class="rex">rex</span><span class="market">market</span>
+                </h1>
+                <!-- Subtítulo mejorado con animación fade-in -->
+                <p class="lead fw-normal mb-0 fade-in" style="color: black;">Emprende con confianza, Crece sin límites
+                </p>
             </div>
         </div>
     </header>
@@ -114,10 +193,38 @@
         </div>
     </footer>
 
-    <!-- Bootstrap core JS-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
+
+
+    <!-- Modal de confirmación de cierre de sesión -->
+    <div class="modal fade" id="logoutModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="logoutModalLabel">¿Estás seguro de que deseas cerrar sesión?</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Si cierras sesión, perderás el acceso a tu cuenta hasta que inicies sesión nuevamente.
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <!-- Formulario de cierre de sesión -->
+              <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Cerrar sesión</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+    <script src="{% static 'js/base.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+
 </body>
+
 
 </html>

@@ -1,51 +1,156 @@
 {% extends "base/base.html" %}
 
 {% block titulo %}
-    Detalles del Producto
+Detalles del Producto
 {% endblock %}
 
 {% block contenido %}
-    <div class="container py-5">
-        <!-- Card principal con color plomo -->
-        <div class="card shadow-sm" style="background-color: #dee4e9; color: rgb(0, 0, 0);">
-            <div class="card-body">
-                <!-- Título del Producto -->
-                <h1 class="text-center mb-4">{{ producto.nombre }}</h1>
 
-                <!-- Imagen del Producto -->
-                <div class="text-center mb-4">
-                    {% if producto.imagen %}
-                        <img src="{{ producto.imagen.url }}" class="img-fluid rounded" alt="{{ producto.nombre }}">
-                    {% else %}
-                        <p class="text-muted">No hay imagen disponible para este producto.</p>
-                    {% endif %}
-                </div>
+<div class="container py-5">
+    <!-- Card principal con color plomo -->
+    <div class="card shadow-sm" style="background-color: #dee4e9; color: rgb(0, 0, 0);">
+        <div class="card-body">
+            <!-- Título del Producto -->
+            <h1 class="text-center mb-4">{{ producto.nombre }}</h1>
 
-                <!-- Descripción del Producto -->
-                <p><strong>Descripción:</strong> {{ producto.descripcion }}</p>
-                <p><strong>Precio:</strong> ${{ producto.precio }}</p>
-                <p><strong>Categoria:</strong>{{producto.categoria}}</p>
-
-                <!-- Formulario de mensaje -->
-                {% if not producto.vendedor == user and not user.is_superuser %}
-                    <div class="mt-4">
-                        <h5 class="card-title">Enviar mensaje al vendedor</h5>
-                        <form method="POST" action="{% url 'mensajeria' producto_id=producto.id %}">
-                            {% csrf_token %}
-                            <div class="mb-3">
-                                <label for="mensaje" class="form-label">Tu Mensaje</label>
-                                <textarea name="mensaje" id="mensaje" class="form-control" rows="4" placeholder="Escribe tu mensaje aquí..." required></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Enviar mensaje</button>
-                        </form>
-                    </div>
+            <!-- Imagen del Producto -->
+            <div class="imagen-producto text-center mb-4">
+                {% if producto.imagen %}
+                <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                {% else %}
+                <p class="text-muted">No hay imagen disponible para este producto.</p>
                 {% endif %}
+            </div>
 
-                <!-- Botón para volver a la tienda -->
-                <div class="text-center mt-4">
-                    <a href="{% url 'home' %}" class="btn btn-secondary">Volver a la tienda</a>
+            <!-- Descripción del Producto -->
+            <p><strong>Descripción:</strong> {{ producto.descripcion }}</p>
+            <p><strong>Precio:</strong> ${{ producto.precio }}</p>
+            <p><strong>Categoría:</strong> {{ producto.categoria }}</p>
+            <p><strong>Vendedor:</strong> {{ producto.vendedor.first_name }} {{ producto.vendedor.last_name }}</p>
+
+
+            {% if producto.vendedor == user %}
+            {% if producto.es_destacado %}
+            <span class="badge bg-warning text-dark">Destacado hasta {{ producto.destacado_hasta|date:"d M Y" }}</span>
+            {% else %}
+            <a href="{% url 'destacar_producto' producto.id %}" class="btn btn-outline-success btn-sm mt-2">Destacar</a>
+            {% endif %}
+            {% endif %}
+
+            <!-- Sección de comentarios -->
+            <div class="mt-4">
+                <h5>Comentarios y Valoraciones</h5>
+                <!-- Mostrar comentarios existentes -->
+                <div class="comentarios mb-4">
+                    {% for comentario in comentarios %}
+                    <div class="mb-3 p-3 rounded" style="background-color: #f1f3f5;">
+                        <strong>{{ comentario.usuario.first_name }}</strong> - <small>{{ comentario.fecha_creacion|date:"d M Y" }}</small>
+                        <p>Valoración: <span class="text-warning">★</span> {{ comentario.valoracion }} / 5</p>
+                        <p>{{ comentario.comentario }}</p>
+                        
+                        <!--reporte -->
+                        {% if user.is_authenticated and comentario.usuario != user %}
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#reportarModal" >
+                                <i class="bi bi-dash-circle"></i>
+                            </button>
+                        {% endif %}
+                    </div>
+                    {% empty %}
+                    <p class="text-muted">No hay comentarios aún. Sé el primero en comentar.</p>
+                    {% endfor %}
                 </div>
+
+                <!-- Formulario para agregar un comentario -->
+                {% if user.is_authenticated %}
+                <!-- Formulario para agregar un comentario -->
+                {% if producto.vendedor != user %}
+                <h6>Deja tu comentario</h6>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="comentario" class="form-label">Tu comentario</label>
+                        <textarea name="comentario" id="comentario" class="form-control" rows="3"
+                            placeholder="Escribe tu comentario..." required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="valoracion" class="form-label">Valoración (1 a 5)</label>
+                        <select name="valoracion" id="valoracion" class="form-select" required>
+                            <option value="1">1 estrella</option>
+                            <option value="2">2 estrellas</option>
+                            <option value="3">3 estrellas</option>
+                            <option value="4">4 estrellas</option>
+                            <option value="5">5 estrellas</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enviar comentario</button>
+                </form>
+                {% endif %}
+                {% else %}
+                <p>Inicia sesión para dejar un comentario.</p>
+                {% endif %}
+            </div>
+
+            <!-- Botón para volver a la tienda -->
+            <div class="text-center mt-4">
+                <a href="{% url 'home' %}" class="btn btn-secondary">Volver a la tienda</a>
             </div>
         </div>
     </div>
+</div>
+
+
+<!-- Modal de Reporte -->
+<div class="modal fade" id="reportarModal" tabindex="-1" aria-labelledby="reportarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="reportarModalLabel">Reportar Comentario</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="comentario_id" id="comentario_id">
+                <label for="motivo">Motivo del reporte:</label>
+                <textarea name="motivo" id="motivo" rows="4" class="form-control" required></textarea>
+                <button type="submit" class="btn btn-danger mt-3">Reportar</button>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
 {% endblock %}
+
+<style>
+    .imagen-producto {
+    width: 300px; 
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; 
+    border: 1px solid #ddd;
+    border-radius: 8px; 
+}
+
+.imagen-producto img {
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+}
+
+
+</style>
+
+<script>
+    // Capturar el clic en el botón "Reportar" y pasar el comentario_id al modal
+    const reportarButtons = document.querySelectorAll('[data-bs-target="#reportarModal"]');
+    reportarButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const comentarioId = this.getAttribute('data-comentario-id');
+            document.getElementById('comentario_id').value = comentarioId;
+        });
+    });
+</script>

@@ -1,102 +1,159 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Registro</title>
     {% load static %}
+    <link rel="icon" type="image/x-icon" href="{% static 'img/rexmarket.png' %}" />
+
+
+    <!-- CSS de Bootstrap y tu archivo de estilos -->
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+
 
     <!-- Enlace al archivo CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
+
 <body>
-    <style>
-        .form-group {
-    margin-bottom: 15px;
-}
+    <!-- Panel de login y registro -->
+    <div class="login-reg-panel">
+        <div class="login-info-box">
+            <h2>¿Tienes una cuenta?</h2>
+            <p>Inicia sesión para continuar</p>
+            <label id="label-register" for="log-reg-show" class="btn btn-light"><a href="{% url 'login' %}">Iniciar
+                    Sesion</a></label>
+        </div>
+        
 
-.form-control {
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-}
+        <div class="white-panel">
+            
+            <div class="register-show">
+                <a href="{% url 'home' %}">X</a>
+                <!-- Formulario de Registro mejorado -->
+                <h3 class="text-center">Registrarse</h3>
 
-.btn-primary {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-}
+                
 
-.error {
-    color: red;
-    font-size: 12px;
-}
-    </style>
-    <section>
-        <form method="post">
-            {% csrf_token %}
-            
-            <div class="form-group">
-                <label for="{{ form.username.id_for_label }}">Username</label>
-                {{ form.username }}
-                {% if form.username.errors %}
-                    <div class="error">{{ form.username.errors }}</div>
-                {% endif %}
+<form method="post" class="box">
+    {% csrf_token %}
+
+    <div class="form-group">
+        <input 
+            type="text" 
+            name="first_name" 
+            value="{{ form.first_name.value|default:'' }}" 
+            placeholder="Nombre" 
+            class="form-control {% if form.first_name.errors %}is-invalid{% endif %}"
+            {% if form.first_name.errors %}
+                data-bs-toggle="tooltip" 
+                data-bs-placement="top" 
+                title="{{ form.first_name.errors|join:', ' }}"
+            {% endif %}
+        >
+    </div>
+
+    <div class="form-group">
+        <input 
+            type="text" 
+            name="last_name" 
+            value="{{ form.last_name.value|default:'' }}" 
+            placeholder="Apellidos" 
+            class="form-control {% if form.last_name.errors %}is-invalid{% endif %}"
+            {% if form.last_name.errors %}
+                data-bs-toggle="tooltip" 
+                data-bs-placement="top" 
+                title="{{ form.last_name.errors|join:', ' }}"
+            {% endif %}
+        >
+    </div>
+
+    <div class="form-group">
+        <input 
+            type="text" 
+            name="username" 
+            value="{{ form.username.value|default:'' }}" 
+            placeholder="RUT ej: 12345678-9" 
+            class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+            {% if form.username.errors %}
+                data-bs-toggle="tooltip" 
+                data-bs-placement="top" 
+                title="{{ form.username.errors|join:', ' }}"
+            {% endif %}
+        >
+    </div>
+
+    <div class="form-group">
+        <input 
+            type="email" 
+            name="email" 
+            value="{{ form.email.value|default:'' }}" 
+            placeholder="Correo electrónico" 
+            class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+            {% if form.email.errors %}
+                data-bs-toggle="tooltip" 
+                data-bs-placement="top" 
+                title="{{ form.email.errors|join:', ' }}"
+            {% endif %}
+        >
+    </div>
+
+    <div class="form-group">
+        <input 
+            type="password" 
+            name="password1" 
+            value="{{ form.password1.value|default:'' }}" 
+            placeholder="Contraseña" 
+            class="form-control {% if form.password1.errors %}is-invalid{% endif %}"
+            {% if form.password1.errors %}
+                data-bs-toggle="tooltip" 
+                data-bs-placement="top" 
+                title="{{ form.password1.errors|join:', ' }}"
+            {% endif %}
+        >
+    </div>
+
+    <div class="form-group">
+        <input 
+            type="password" 
+            name="password2" 
+            value="{{ form.password2.value|default:'' }}" 
+            placeholder="Confirmar contraseña" 
+            class="form-control {% if form.password2.errors %}is-invalid{% endif %}"
+            {% if form.password2.errors %}
+                data-bs-toggle="tooltip" 
+                data-bs-placement="top" 
+                title="{{ form.password2.errors|join:', ' }}"
+            {% endif %}
+        >
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block">Registrar</button>
+</form>
+
+
             </div>
-            
-            <div class="form-group">
-                <label for="{{ form.email.id_for_label }}">Email</label>
-                {{ form.email }}
-                {% if form.email.errors %}
-                    <div class="error">{{ form.email.errors }}</div>
-                {% endif %}
-            </div>
-            
-            <div class="form-group">
-                <label for="{{ form.first_name.id_for_label }}">Nombre</label>
-                {{ form.first_name }}
-                {% if form.first_name.errors %}
-                    <div class="error">{{ form.first_name.errors }}</div>
-                {% endif %}
-            </div>
-            
-            <div class="form-group">
-                <label for="{{ form.last_name.id_for_label }}">Apellido</label>
-                {{ form.last_name }}
-                {% if form.last_name.errors %}
-                    <div class="error">{{ form.last_name.errors }}</div>
-                {% endif %}
-            </div>
-            
-            
-        
-            <div class="form-group">
-                <label for="{{ form.password1.id_for_label }}">Password</label>
-                {{ form.password1 }}
-                {% if form.password1.errors %}
-                    <div class="error">{{ form.password1.errors }}</div>
-                {% endif %}
-            </div>
-        
-            <div class="form-group">
-                <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
-                {{ form.password2 }}
-                {% if form.password2.errors %}
-                    <div class="error">{{ form.password2.errors }}</div>
-                {% endif %}
-            </div>
-        
-            <button type="submit" class="btn btn-primary">Registrarse</button>
-            <div class="register">
-                <p>¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión</a></p>
-            </div>
-        </form>
-        
-    </section>
+
+        </div>
+    </div>
+    </div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script src="{% static 'js/signup.js' %}"></script>
+
+
+
 </body>
+
 </html>

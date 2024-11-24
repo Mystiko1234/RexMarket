@@ -16,30 +16,50 @@
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     
-                    <!-- Mostrar el formulario con clases de Bootstrap -->
-                    <div class="mb-3">
-                        <label for="id_nombre" class="form-label">Nombre del Producto</label>
-                        {{ form.nombre }}
-                    </div>
+                   <!-- Nombre -->
+        <div class="mb-3">
+            <label for="{{ form.nombre.id_for_label }}" class="form-label">Nombre del Producto</label>
+            {{ form.nombre }}
+            {% for error in form.nombre.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
 
-                    <div class="mb-3">
-                        <label for="id_descripcion" class="form-label">Descripción</label>
-                        {{ form.descripcion }}
-                    </div>
+        <!-- Descripción -->
+        <div class="mb-3">
+            <label for="{{ form.descripcion.id_for_label }}" class="form-label">Descripción</label>
+            {{ form.descripcion }}
+            {% for error in form.descripcion.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
 
-                    <div class="mb-3">
-                        <label for="id_precio" class="form-label">Precio</label>
-                        {{ form.precio }}
-                    </div>
+        <!-- Precio -->
+        <div class="mb-3">
+            <label for="{{ form.precio.id_for_label }}" class="form-label">Precio</label>
+            {{ form.precio }}
+            {% for error in form.precio.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
 
-                    <div class="mb-3">
-                        <label for="id_imagen" class="form-label">Imagen</label>
-                        {{ form.imagen }}
-                    </div>
-                    <div class="mb-3">
-                        <label for="id_categorias" class="form-label">Categorías</label>
-                        {{ form.categoria }}
-                    </div>
+        <!-- Imagen -->
+        <div class="mb-3">
+            <label for="{{ form.imagen.id_for_label }}" class="form-label">Imagen</label>
+            {{ form.imagen }}
+            {% for error in form.imagen.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <!-- Categoría -->
+        <div class="mb-3">
+            <label for="{{ form.categoria.id_for_label }}" class="form-label">Categorías</label>
+            {{ form.categoria }}
+            {% for error in form.categoria.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
                     
                     <!-- Botón para enviar el formulario -->
                     <button type="submit" class="btn btn-success w-100 mt-3">Actualizar Producto</button>
