@@ -42,34 +42,13 @@
                 <ul class="navbar-nav  d-flex align-items-center" style="width: 80%;">
                     <!-- Mensajes -->
                     <li class="nav-item">
-                        <a href="{% url 'conversations_list' %}" class="btn btn-primary">Ver todas las conversaciones</a>
-                    </li>
-                
-                    <!-- Dropdown de Mensajes -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" id="messagesDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-chat-text"></i>
-                            {% if mensajes_no_leidos %}
-                            <span class="badge bg-danger">{{ mensajes_no_leidos }}</span>
-                            {% endif %}
+                        <a href="{% url 'conversations_list' %}" class="nav-link" title="Ver conversaciones">
+                            <i class="bi bi-chat-text" aria-hidden="true" ></i>
+                            <span class="visually-hidden">Conversations</span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="messagesDropdown">
-                            <li>
-                                <a href="#" class="dropdown-item">
-                                    <div class="d-flex">
-                                        <img src="https://via.placeholder.com/50" alt="User Avatar" class="rounded-circle me-3" style="width: 50px;">
-                                        <div>
-                                            <h6 class="mb-0">Brad Diesel</h6>
-                                            <p class="text-muted small mb-0">Call me whenever you can...</p>
-                                            <small class="text-muted"><i class="bi bi-clock"></i> 4 Hours Ago</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a href="#" class="dropdown-item dropdown-footer">Ver todos los mensajes</a></li>
-                        </ul>
                     </li>
+                    <!-- Dropdown de Mensajes -->
+                  
                 
                     <!-- Contenedor para centrar la barra de búsqueda y el filtro -->
                     <div class="d-flex flex-grow-1 justify-content-center align-items-center">
@@ -187,9 +166,21 @@
     <!-- Footer-->
     <footer class="py-5 bg-dark">
         <div class="container">
-            <p class="m-0 text-center text-white">Copyright &copy; RexMarket 2024</p>
+            <p class="m-0 text-center text-white">
+                Copyright &copy; RexMarket 2024
+            </p>
+            <p class="m-0 text-white d-flex justify-content-between">
+                <span><strong>Contacto:</strong> rexmarket26@gmail.com</span>
+                <a href="https://www.instagram.com/rexmarket_talca?igsh=OXlsZXZmZXVkdXV4" target="_blank" class="text-white">
+                    <i class="bi bi-instagram"></i> Instagram
+                </a>
+            </p>
         </div>
     </footer>
+    
+    
+
+    
 
 
 

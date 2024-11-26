@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-from telnetlib import LOGOUT
 
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -76,18 +75,21 @@ WSGI_APPLICATION = 'loginProject.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-import pymysql
-pymysql.install_as_MySQLdb()
-
-
+PASSWORD='Admin1234'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'loginDB',
-        'USER': 'root',
-        'PASSWORD': '',
+        'NAME': 'rexmarket',
+        'USER': 'admin',
+        'PASSWORD': PASSWORD,
+        'HOST':'database-1.cbmsuqi8cs3f.us-east-1.rds.amazonaws.com',
+        'PORT':3306,
+        'OPTIONS':{
+            'ssl':{'ssl_disabled': True}
+        }
     }
 }
+
 
 
 # Password validation

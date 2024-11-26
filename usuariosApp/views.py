@@ -364,7 +364,7 @@ def send_message(request, conversation_id):
                 content=content,
                 conversation=conversation
             )
-
+            print(f"Mensaje creado: {message.content}")  # Verificar que el mensaje se creó
             return JsonResponse({'message': 'Mensaje enviado correctamente'})
         else:
             return JsonResponse({'error': 'El contenido del mensaje no puede estar vacío'}, status=400)

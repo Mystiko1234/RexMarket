@@ -28,7 +28,9 @@ Detalles del Producto
             <p><strong>Categoría:</strong> {{ producto.categoria }}</p>
             <p><strong>Vendedor:</strong> {{ producto.vendedor.first_name }} {{ producto.vendedor.last_name }}</p>
             {% if user.is_authenticated and producto.vendedor %}
-            <a href="{% url 'start_conversation' producto.vendedor.id %}" class="btn btn-primary">Contactar al Vendedor</a>
+                {% if producto.vendedor != user %}
+                <a href="{% url 'start_conversation' producto.vendedor.id %}" class="btn btn-primary">Contactar al Vendedor</a>
+                {% endif %}
             {% else %}
                 <p>Inicia sesión para contactar con el vendedor.</p>
             {% endif %}

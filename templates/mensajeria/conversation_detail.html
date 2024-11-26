@@ -1,77 +1,124 @@
-<h1>Chat con {{ other_participant.first_name }} {{ other_participant.last_name}}</h1>
 
-<ul id="message-list">
-    {% for message in conversation.messages.all %}
-        <li>
-            <strong>
-                {% if message.sender != request.user %}
-                    {{ message.sender.first_name }} {{ message.sender.last_name }}  <!-- Nombre del remitente -->
-                {% else %}
-                    Tú  <!-- Si es el usuario actual -->
-                {% endif %}
-                :
-            </strong>
-            {{ message.content }}  <!-- El contenido del mensaje -->
-            <small>{{ message.timestamp }}</small>  <!-- La fecha y hora del mensaje -->
-        </li>
-    {% endfor %}
-</ul>
+    {% load static %}
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        {% load static %}
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>RexMarket</title>
+        <link rel="stylesheet" href="{% static 'css/conversation_details.css' %}">
+    </head>
+    <body>
 
-<form id="message-form" method="POST">
-    {% csrf_token %}
-    <textarea id="message-input" placeholder="Escribe tu mensaje..."></textarea>
-    <button type="submit">Enviar</button>
-</form>
+        <div class="chat-container">
+            <!-- Encabezado -->
+            <header class="chat-header">
+                Chat con {{ other_participant.first_name }} {{ other_participant.last_name }}
+                <!-- Botón para salir del chat -->
+                <a href="{% url 'conversations_list' %}" class="btn-exit">Salir</a>
+            </header>
+        
+            <!-- Lista de mensajes -->
+            <ul id="message-list" class="message-list">
+                {% for message in conversation.messages.all %}
+                    <li class="message-item {% if message.sender == request.user %}sent{% else %}received{% endif %}">
+                        {% if message.sender != request.user %}
+                            <strong class="message-sender">{{ message.sender.first_name }} {{ message.sender.last_name }}</strong>
+                        {% else %}
+                            <strong class="message-sender">Tú</strong>
+                        {% endif %}
+                        <p class="message-content">{{ message.content }}</p>
+                        <small class="message-timestamp">{{ message.timestamp|date:"H:i" }}</small>
+                    </li>
+                {% endfor %}
+            </ul>
+        
+            <!-- Formulario para enviar mensajes -->
+            <form id="message-form" class="message-form" method="POST">
+                {% csrf_token %}
+                <textarea id="message-input" name="message" placeholder="Escribe tu mensaje..."></textarea>
+                <button type="submit">Enviar</button>
+            </form>
+        </div>
 
-<script>
-const conversationId = {{ conversation.id }};
-const messageList = document.getElementById('message-list');
-const messageInput = document.getElementById('message-input');
 
-// Función para cargar los mensajes
-function loadMessages() {
+        <script>
+            const conversationId = {{ conversation.id }};
+            const messageList = document.getElementById('message-list');
+            const messageInput = document.getElementById('message-input');
+            const userId = {{ request.user.id }};  // Pasamos el ID del usuario al frontend
+        
+            // Función para cargar los mensajes
+            function loadMessages() {
     fetch(`/conversations/${conversationId}/messages/`)
         .then(response => response.json())
         .then(data => {
-            messageList.innerHTML = '';  // Limpiar la lista de mensajes
+            messageList.innerHTML = '';  // Limpiar los mensajes anteriores
+
+            // Iterar sobre los mensajes y agregar el HTML correspondiente
             data.messages.forEach(message => {
                 const messageElement = document.createElement('li');
-                // Aquí mostramos el nombre completo del remitente
-                messageElement.innerHTML = `<strong>${message.sender.first_name} ${message.sender.last_name}</strong>: ${message.content} <small>${message.timestamp}</small>`;
+                messageElement.classList.add('message-item');
+
+                if (message.sender.id === userId) {
+                    messageElement.classList.add('sent');
+                    messageElement.innerHTML = `
+                        <strong class="message-sender">Tú</strong>
+                        <p class="message-content">${message.content}</p>
+                        <small class="message-timestamp">${message.timestamp}</small>
+                    `;
+                } else {
+                    messageElement.classList.add('received');
+                    messageElement.innerHTML = `
+                        <strong class="message-sender">${message.sender.first_name} ${message.sender.last_name}</strong>
+                        <p class="message-content">${message.content}</p>
+                        <small class="message-timestamp">${message.timestamp}</small>
+                    `;
+                }
+
                 messageList.appendChild(messageElement);
             });
+
+            // Desplazar automáticamente al último mensaje
+            messageList.scrollTop = messageList.scrollHeight;
         })
         .catch(error => console.error('Error al cargar los mensajes:', error));
 }
+        
+            // Cargar los mensajes inicialmente
+            loadMessages();
+            setInterval(loadMessages, 500000);  // Actualizar cada 5 segundos
+        
+            // Enviar el mensaje
+            document.getElementById('message-form').addEventListener('submit', function (event) {
+                event.preventDefault();
+                const messageContent = messageInput.value.trim();
+        
+                if (messageContent) {
+                    fetch(`/conversations/${conversationId}/messages/send/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                        },
+                        body: JSON.stringify({ content: messageContent })
+                    })
+                        .then(() => {
+                            messageInput.value = '';  // Limpiar el input después de enviar el mensaje
+                            loadMessages();  // Volver a cargar los mensajes
+                        })
+                        .catch(error => console.error('Error al enviar el mensaje:', error));
+                }
+            });
+        </script>
+        
 
-// Cargar los mensajes inicialmente
-loadMessages();
 
-// Actualizar los mensajes cada 5 segundos
-setInterval(loadMessages, 5000);
+       
+        
+    </body>
+    </html>
 
-// Enviar el mensaje
-document.getElementById('message-form').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const messageContent = messageInput.value;
-
-    if (messageContent.trim()) {
-        fetch(`/conversations/${conversationId}/messages/send/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-            },
-            body: JSON.stringify({ content: messageContent })
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Limpiar el input después de enviar el mensaje
-            messageInput.value = '';
-            loadMessages();  // Volver a cargar los mensajes
-        })
-        .catch(error => console.error('Error al enviar el mensaje:', error));
-    }
-});
-
-</script>
+    
+    
