@@ -1,0 +1,13 @@
+<h1>Contactar con {{ recipient.first_name }} {{ recipient.last_name }}</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+    <textarea name="content" rows="5" cols="50" placeholder="Escribe tu mensaje aquí"></textarea>
+    <br>
+    <button type="submit" class="btn btn-primary">Enviar Mensaje</button>
+</form>
+
+<a href="{% url 'inbox' %}" class="btn btn-secondary">Volver a la Bandeja</a>

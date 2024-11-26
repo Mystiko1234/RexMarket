@@ -1,0 +1,32 @@
+{% extends "base/base.html" %}
+
+{% block titulo %}
+RexMarket
+{% endblock %}
+
+
+{% block contenido %}
+
+<h1>Tus Conversaciones</h1>
+
+<ul class="contact-list">
+    {% for contact, conversations in grouped_conversations.items %}
+        <li>
+            <!-- Mostrar nombre y apellido del otro participante -->
+            <h3>{{ contact.first_name }} {{ contact.last_name }}</h3>
+            <ul class="conversation-list">
+                {% for conversation in conversations %}
+                    <li>
+                        <a href="{% url 'conversation_detail' conversation.id %}">
+                            <!-- Mostrar último mensaje y su timestamp -->
+                            Último mensaje: {{ conversation.messages.last.content|truncatechars:50 }}
+                            <small>{{ conversation.messages.last.timestamp|date:"d/m/Y H:i" }}</small>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

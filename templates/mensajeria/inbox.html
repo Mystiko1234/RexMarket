@@ -1,0 +1,17 @@
+<h1>Bandeja de Entrada</h1>
+
+<ul class="conversation-list">
+    {% for convo in user_conversations %}
+        <li>
+            <a href="{% url 'conversation_detail' convo.conversation.id %}">
+                <div class="contact">
+                    <strong>{{ convo.other_participant.username }}</strong><br>
+                    <small>{{ convo.last_message.content|truncatechars:50 }}</small><br>
+                    <small class="timestamp">{{ convo.last_message.timestamp|date:"H:i" }}</small>
+                </div>
+            </a>
+        </li>
+    {% empty %}
+        <p>No tienes conversaciones activas.</p>
+    {% endfor %}
+</ul>

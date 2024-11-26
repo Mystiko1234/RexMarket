@@ -1,0 +1,77 @@
+<h1>Chat con {{ other_participant.first_name }} {{ other_participant.last_name}}</h1>
+
+<ul id="message-list">
+    {% for message in conversation.messages.all %}
+        <li>
+            <strong>
+                {% if message.sender != request.user %}
+                    {{ message.sender.first_name }} {{ message.sender.last_name }}  <!-- Nombre del remitente -->
+                {% else %}
+                    Tú  <!-- Si es el usuario actual -->
+                {% endif %}
+                :
+            </strong>
+            {{ message.content }}  <!-- El contenido del mensaje -->
+            <small>{{ message.timestamp }}</small>  <!-- La fecha y hora del mensaje -->
+        </li>
+    {% endfor %}
+</ul>
+
+<form id="message-form" method="POST">
+    {% csrf_token %}
+    <textarea id="message-input" placeholder="Escribe tu mensaje..."></textarea>
+    <button type="submit">Enviar</button>
+</form>
+
+<script>
+const conversationId = {{ conversation.id }};
+const messageList = document.getElementById('message-list');
+const messageInput = document.getElementById('message-input');
+
+// Función para cargar los mensajes
+function loadMessages() {
+    fetch(`/conversations/${conversationId}/messages/`)
+        .then(response => response.json())
+        .then(data => {
+            messageList.innerHTML = '';  // Limpiar la lista de mensajes
+            data.messages.forEach(message => {
+                const messageElement = document.createElement('li');
+                // Aquí mostramos el nombre completo del remitente
+                messageElement.innerHTML = `<strong>${message.sender.first_name} ${message.sender.last_name}</strong>: ${message.content} <small>${message.timestamp}</small>`;
+                messageList.appendChild(messageElement);
+            });
+        })
+        .catch(error => console.error('Error al cargar los mensajes:', error));
+}
+
+// Cargar los mensajes inicialmente
+loadMessages();
+
+// Actualizar los mensajes cada 5 segundos
+setInterval(loadMessages, 5000);
+
+// Enviar el mensaje
+document.getElementById('message-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const messageContent = messageInput.value;
+
+    if (messageContent.trim()) {
+        fetch(`/conversations/${conversationId}/messages/send/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+            body: JSON.stringify({ content: messageContent })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Limpiar el input después de enviar el mensaje
+            messageInput.value = '';
+            loadMessages();  // Volver a cargar los mensajes
+        })
+        .catch(error => console.error('Error al enviar el mensaje:', error));
+    }
+});
+
+</script>

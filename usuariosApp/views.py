@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import CreateView
 from rest_framework.reverse import reverse_lazy
 from django.contrib.auth import login, authenticate
-from usuariosApp.models import Producto
+from usuariosApp.models import Producto, Favorito, Comentario, Message, Conversation
 from usuariosApp.forms import ProductoForm, ComentarioForm, CustomUserCreationForm 
 from django.core.mail import send_mail
 from django.conf import settings
@@ -19,7 +19,12 @@ from django.views import View
 from django.contrib import messages
 from django.utils.timezone import now, timedelta
 from django.db.models import Avg, F, Q
+from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+import json
+from django.contrib.auth.decorators import user_passes_test
+
+
 
 
 
@@ -79,12 +84,12 @@ def lista_productos(request):
     categoria_seleccionada = request.GET.get('categoria', '')  # Captura la categoría seleccionada
     ordenar_por = request.GET.get('ordenar_por', '')  # Captura el orden seleccionado
 
-    # Obtiene todos los productos
+    # Obtiene todos los productos con anotación de "destacado válido"
     productos = Producto.objects.annotate(
         destacado_valido=Q(destacado_hasta__gte=now())
     ).order_by(
         F('destacado_hasta').desc(nulls_last=True)
-    )
+    ).prefetch_related('favoritos')  # Prefetch de la relación favoritos para optimización
 
     # Filtrar por búsqueda
     if query:
@@ -92,11 +97,14 @@ def lista_productos(request):
             Q(nombre__icontains=query) | Q(descripcion__icontains=query)
         )
 
-    # Filtrar por categoría
+    # Filtrar por categoría o favoritos
     if categoria_seleccionada:
-        productos = productos.filter(categoria=categoria_seleccionada)
+        if categoria_seleccionada == 'favoritos' and request.user.is_authenticated:
+            productos = productos.filter(favoritos__usuario=request.user)
+        else:
+            productos = productos.filter(categoria=categoria_seleccionada)
 
-    # Ordenar productos
+    # Ordenar productos según la selección
     if ordenar_por == 'precio_asc':
         productos = productos.order_by('precio')
     elif ordenar_por == 'precio_desc':
@@ -106,7 +114,7 @@ def lista_productos(request):
             valoracion_promedio=Avg('comentarios__valoracion')
         ).order_by('-valoracion_promedio')
 
-    # Calcular promedio de valoraciones (si no está ordenado por ello)
+    # Calcular el promedio de valoraciones si no está ordenado por ello
     if ordenar_por != 'valoracion':
         for producto in productos:
             promedio = producto.comentarios.aggregate(promedio=Avg('valoracion'))['promedio']
@@ -117,10 +125,19 @@ def lista_productos(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    # Obtener todas las categorías del modelo
-    categorias = Producto.CATEGORIAS
+    # Determinar si los productos son favoritos del usuario autenticado
+    if request.user.is_authenticated:
+        favoritos_ids = set(request.user.favoritos.values_list('producto_id', flat=True))
+        for producto in page_obj:
+            producto.es_favorito_usuario = producto.id in favoritos_ids
+    else:
+        for producto in page_obj:
+            producto.es_favorito_usuario = False
 
-    # Pasar los datos al contexto
+    # Agregar la opción de "favoritos" en las categorías
+    categorias = list(Producto.CATEGORIAS) + [('favoritos', 'Mis Favoritos')]
+
+    # Renderizar la plantilla con el contexto
     return render(request, 'index.html', {
         'page_obj': page_obj,
         'query': query,
@@ -129,7 +146,6 @@ def lista_productos(request):
         'ordenar_por': ordenar_por,
         'user': request.user
     })
-
 
 def editar_producto(request, pk):
     producto = get_object_or_404(Producto, pk=pk)
@@ -274,3 +290,143 @@ def destacar_producto(request, producto_id):
         return redirect('home')  # Redirige a la lista de productos
 
     return render(request, 'destacar.html', {'producto': producto})
+
+
+@csrf_exempt
+@login_required
+def toggle_favorito(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        producto_id = data.get('producto_id')
+        
+        try:
+            producto = Producto.objects.get(id=producto_id)
+            favorito, created = Favorito.objects.get_or_create(usuario=request.user, producto=producto)
+
+            if not created:
+                favorito.delete()
+                return JsonResponse({'success': True, 'action': 'removed'})
+
+            return JsonResponse({'success': True, 'action': 'added'})
+        except Producto.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Producto no encontrado.'})
+    return JsonResponse({'success': False, 'error': 'Método no permitido.'})
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def eliminar_comentario(request, comentario_id):
+    comentario = get_object_or_404(Comentario, id=comentario_id)
+    producto_id = comentario.producto.id 
+    comentario.delete()
+    messages.success(request, "Comentario eliminado exitosamente.")
+    return redirect('detalle_producto', producto_id=producto_id)
+
+
+@login_required
+def inbox(request):
+    # Filtra las conversaciones del usuario
+    conversations = Conversation.objects.filter(participants=request.user).distinct()
+
+    # Obtén el otro participante para cada conversación
+    user_conversations = []
+    for conversation in conversations:
+        other_participant = conversation.participants.exclude(id=request.user.id).first()
+        if other_participant:
+            last_message = conversation.messages.last()
+            # Verifica si hay mensajes en la conversación
+            if last_message:
+                user_conversations.append({
+                    'conversation': conversation,
+                    'other_participant': other_participant,
+                    'last_message': last_message,
+                })
+            else:
+                # Si no hay mensajes, sigue agregando la conversación pero sin mensaje
+                user_conversations.append({
+                    'conversation': conversation,
+                    'other_participant': other_participant,
+                    'last_message': None,
+                })
+
+    return render(request, 'mensajeria/inbox.html', {'user_conversations': user_conversations})
+
+    
+def send_message(request, conversation_id):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        content = data.get('content')
+        conversation = get_object_or_404(Conversation, id=conversation_id)
+
+        if content:
+            # Crear el mensaje
+            message = Message.objects.create(
+                sender=request.user,
+                content=content,
+                conversation=conversation
+            )
+
+            return JsonResponse({'message': 'Mensaje enviado correctamente'})
+        else:
+            return JsonResponse({'error': 'El contenido del mensaje no puede estar vacío'}, status=400)
+        
+@login_required
+def conversation_detail(request, conversation_id):
+    conversation = get_object_or_404(Conversation, id=conversation_id)
+    other_participant = conversation.participants.exclude(id=request.user.id).first()  # Obtén al otro participante
+    
+    return render(request, 'mensajeria/conversation_detail.html', {
+        'conversation': conversation,
+        'other_participant': other_participant,  # Pasa el otro participante (el objeto User)
+    })
+
+@login_required
+def start_conversation(request, recipient_id):
+    recipient = get_object_or_404(User, id=recipient_id)
+
+    # Verifica si ya existe una conversación entre comprador y vendedor
+    conversation = Conversation.objects.filter(participants=request.user).filter(participants=recipient).first()
+
+    if not conversation:
+        conversation = Conversation.objects.create()
+        conversation.participants.add(request.user, recipient)
+
+    return redirect('conversation_detail', conversation_id=conversation.id)
+
+
+@login_required
+def conversations_list(request):
+    # Filtra todas las conversaciones donde participa el usuario
+    conversations = Conversation.objects.filter(participants=request.user).distinct()
+
+    # Agrupar por otro participante
+    grouped_conversations = {}
+    for conversation in conversations:
+        # Encuentra el otro participante
+        other_participant = conversation.participants.exclude(id=request.user.id).first()
+
+        if other_participant:
+            # Agrupa las conversaciones por el otro participante
+            grouped_conversations.setdefault(other_participant, []).append(conversation)
+    
+    return render(request, 'mensajeria/conversations_list.html', {
+        'grouped_conversations': grouped_conversations,
+    })
+
+def get_conversation_messages(request, conversation_id):
+    # Obtén los mensajes de la conversación
+    messages = Message.objects.filter(conversation_id=conversation_id).order_by('timestamp')
+
+    # Crea una lista de los mensajes para devolver en formato JSON
+    message_data = [
+        {
+            'sender': {
+                'first_name': message.sender.first_name,
+                'last_name': message.sender.last_name,
+            },
+            'content': message.content,
+            'timestamp': message.timestamp.strftime('%d/%m/%Y %H:%M')  # Formato de fecha
+        }
+        for message in messages
+    ]
+
+    return JsonResponse({'messages': message_data})

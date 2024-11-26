@@ -37,6 +37,11 @@ class Producto(models.Model):
     
     def es_destacado(self):
         return self.destacado_hasta and self.destacado_hasta > now()
+    
+    def es_favorito(self, usuario):
+        if usuario.is_authenticated:
+            return self.favoritos.filter(usuario=usuario).exists()
+        return False
 
     
 
@@ -60,3 +65,28 @@ class Comentario(models.Model):
     def __str__(self):
         return f'{self.usuario.username} - {self.producto.nombre}'
     
+
+class Favorito(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favoritos')
+    producto = models.ForeignKey('Producto', on_delete=models.CASCADE, related_name='favoritos')
+    fecha_agregado = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('usuario', 'producto')  # Evita duplicados
+
+    def __str__(self):
+        return f"{self.usuario.username} - {self.producto.nombre}"
+    
+class Conversation(models.Model):
+    participants = models.ManyToManyField(User, related_name='conversations')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Message(models.Model):
+    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['timestamp']  # Ordenar mensajes por fecha

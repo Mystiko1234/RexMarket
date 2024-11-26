@@ -42,12 +42,7 @@
                 <ul class="navbar-nav  d-flex align-items-center" style="width: 80%;">
                     <!-- Mensajes -->
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            Mensajes
-                            {% if mensajes_no_leidos %}
-                            <span class="badge bg-danger">{{ mensajes_no_leidos }}</span>
-                            {% endif %}
-                        </a>
+                        <a href="{% url 'conversations_list' %}" class="btn btn-primary">Ver todas las conversaciones</a>
                     </li>
                 
                     <!-- Dropdown de Mensajes -->
@@ -107,6 +102,9 @@
                                             <label class="dropdown-header">Categorías</label>
                                             <select name="categoria" class="form-select mb-2" onchange="this.form.submit()">
                                                 <option value="">Todas las categorías</option>
+                                                <option value="favoritos" {% if categoria_seleccionada == 'favoritos' %}selected{% endif %}>
+                                                    Mis favoritos
+                                                </option>
                                                 {% for categoria_codigo, categoria_nombre in categorias %}
                                                 <option value="{{ categoria_codigo }}" {% if categoria_seleccionada == categoria_codigo %}selected{% endif %}>
                                                     {{ categoria_nombre }}
