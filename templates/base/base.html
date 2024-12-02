@@ -109,7 +109,7 @@
                 
     
                 <!-- Perfil de usuario -->
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center ">
                     {% if user.is_authenticated %}
                     <div class="dropdown">
                         <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
@@ -118,8 +118,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu" >
                             <li><a class="dropdown-item" href="{% url 'publicar_producto' %}">Publicar Producto</a></li>
-                            <li><a class="dropdown-item" href="#">Configuración</a></li>
-                            <li><a class="dropdown-item" href="#">Perfil</a></li>
+                            <li><a class="dropdown-item" href="{% url 'profile' %}">Perfil</a></li>
                             
                             <li><hr class="dropdown-divider"></li>
                             <li>

@@ -75,18 +75,16 @@ WSGI_APPLICATION = 'loginProject.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-PASSWORD='Admin1234'
+import pymysql
+pymysql.install_as_MySQLdb()
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'rexmarket',
-        'USER': 'admin',
-        'PASSWORD': PASSWORD,
-        'HOST':'database-1.cbmsuqi8cs3f.us-east-1.rds.amazonaws.com',
-        'PORT':3306,
-        'OPTIONS':{
-            'ssl':{'ssl_disabled': True}
-        }
+        'NAME': 'logindb',
+        'USER': 'root',
+        'PASSWORD': '',
     }
 }
 

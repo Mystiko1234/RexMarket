@@ -19,7 +19,7 @@ from tkinter.font import names
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic.base import TemplateView
-from usuariosApp.views import publicar_producto, lista_productos,editar_producto, eliminar_producto, detalle_producto,VerifyEmailView, destacar_producto, toggle_favorito, eliminar_comentario, inbox, send_message, conversation_detail, start_conversation, conversations_list, get_conversation_messages
+from usuariosApp.views import publicar_producto, lista_productos,editar_producto, eliminar_producto, detalle_producto,VerifyEmailView, destacar_producto, toggle_favorito, eliminar_comentario, inbox, send_message, conversation_detail, start_conversation, conversations_list, get_conversation_messages, ProfileView
 from usuariosApp.views import SignUpView
 from django.conf import settings
 from django.conf.urls.static import static
@@ -46,6 +46,7 @@ urlpatterns = [
     path('conversations/<int:conversation_id>/messages/send/', send_message, name='send_message'),
     path('conversations/', conversations_list, name='conversations_list'),
     path('conversations/<int:conversation_id>/messages/', get_conversation_messages, name='get_conversation_messages'),
+    path('profile/', ProfileView.as_view(), name='profile'),
 ]
 
  

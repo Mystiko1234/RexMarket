@@ -24,6 +24,7 @@ from django.http import JsonResponse
 import json
 from django.contrib.auth.decorators import user_passes_test
 
+from django.views.generic import DetailView
 
 
 
@@ -430,3 +431,15 @@ def get_conversation_messages(request, conversation_id):
     ]
 
     return JsonResponse({'messages': message_data})
+
+
+
+
+class ProfileView(DetailView):
+    model = User
+    template_name = 'registration/profile.html'  # Plantilla para mostrar el perfil
+    context_object_name = 'user'  # El contexto será llamado 'user' en la plantilla
+
+    def get_object(self):
+        return self.request.user
+    
