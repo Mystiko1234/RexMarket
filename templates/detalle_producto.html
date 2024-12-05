@@ -10,9 +10,14 @@ Detalles del Producto
     <!-- Card principal con color plomo -->
     <div class="card shadow-sm" style="background-color: #dee4e9; color: rgb(0, 0, 0);">
         <div class="card-body">
+            <!-- Botón de Reportar Producto -->
+                {% if user.is_authenticated and producto.usuario != user %}
+                <button type="button" class="btn btn-danger position-absolute top-0 end-0 m-2" data-bs-toggle="modal" data-bs-target="#reportarModal-{{ producto.id }}">
+                    <i class="bi bi-dash-circle"></i>
+                </button>
+            {% endif %}
             <!-- Título del Producto -->
             <h1 class="text-center mb-4">{{ producto.nombre }}</h1>
-
             <!-- Imagen del Producto -->
             <div class="imagen-producto text-center mb-4">
                 {% if producto.imagen %}
@@ -54,7 +59,7 @@ Detalles del Producto
                     {% for comentario in comentarios %}
                     <div class="mb-3 p-3 rounded" style="background-color: #f1f3f5;">
                         <div class="position-relative">
-                            <!--reporte -->
+                            <!--reporte Comentario-->
                         {% if user.is_authenticated and comentario.usuario != user %}
                         <button type="button" class="btn btn-danger position-absolute top-0 end-0 m-2" data-bs-toggle="modal" data-bs-target="#reportarModal" >
                             <i class="bi bi-dash-circle"></i>
@@ -117,7 +122,30 @@ Detalles del Producto
 </div>
 
 
-<!-- Modal de Reporte -->
+<!-- Modal de Reporte Producto -->
+<div class="modal fade" id="reportarModal-{{ producto.id }}" tabindex="-1" aria-labelledby="reportarModalLabel-{{ producto.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reportarModalLabel-{{ producto.id }}">Reportar Producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <p>¿Por qué deseas reportar este producto?</p>
+                    <textarea name="motivo" class="form-control" rows="4" required></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Enviar Reporte</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Reporte Comentario -->
 <div class="modal fade" id="reportarModal" tabindex="-1" aria-labelledby="reportarModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
