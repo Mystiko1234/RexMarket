@@ -84,6 +84,9 @@
                                                 <option value="favoritos" {% if categoria_seleccionada == 'favoritos' %}selected{% endif %}>
                                                     Mis favoritos
                                                 </option>
+                                                <option value="mis_productos" {% if categoria_seleccionada == 'mis_productos' %}selected{% endif %}>
+                                                    Mis productos
+                                                </option>                                                
                                                 {% for categoria_codigo, categoria_nombre in categorias %}
                                                 <option value="{{ categoria_codigo }}" {% if categoria_seleccionada == categoria_codigo %}selected{% endif %}>
                                                     {{ categoria_nombre }}
@@ -109,7 +112,7 @@
                 
     
                 <!-- Perfil de usuario -->
-                <div class="d-flex align-items-center ">
+                <div class="d-flex align-items-center justify-content-end ms-auto ">
                     {% if user.is_authenticated %}
                     <div class="dropdown">
                         <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
@@ -140,20 +143,6 @@
 
    
 
-    <!-- Header-->
-    <header class="py-3 ms-4 me-4 rounded-4 shadow-lg">
-        <div class="container px-4 px-lg-5 my-4">
-            <div class="text-center text-white">
-                <!-- Título con animación -->
-                <h1 class="animate-charcter display-4 fw-bolder" style="letter-spacing: 2px;">
-                    <span class="rex">rex</span><span class="market">market</span>
-                </h1>
-                <!-- Subtítulo mejorado con animación fade-in -->
-                <p class="lead fw-normal mb-0 fade-in" style="color: black;">Emprende con confianza, Crece sin límites
-                </p>
-            </div>
-        </div>
-    </header>
 
     <!-- Main Content -->
     <div class="container py-5">

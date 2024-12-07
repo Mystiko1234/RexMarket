@@ -85,7 +85,7 @@ def lista_productos(request):
     categoria_seleccionada = request.GET.get('categoria', '')  # Captura la categoría seleccionada
     ordenar_por = request.GET.get('ordenar_por', '')  # Captura el orden seleccionado
 
-    # Obtiene todos los productos con anotación de "destacado válido"
+    # Obtiene todos los productos
     productos = Producto.objects.annotate(
         destacado_valido=Q(destacado_hasta__gte=now())
     ).order_by(
@@ -98,10 +98,12 @@ def lista_productos(request):
             Q(nombre__icontains=query) | Q(descripcion__icontains=query)
         )
 
-    # Filtrar por categoría o favoritos
+    # Filtrar por categoría, favoritos o mis productos
     if categoria_seleccionada:
         if categoria_seleccionada == 'favoritos' and request.user.is_authenticated:
             productos = productos.filter(favoritos__usuario=request.user)
+        elif categoria_seleccionada == 'mis_productos' and request.user.is_authenticated:
+            productos = productos.filter(vendedor=request.user)
         else:
             productos = productos.filter(categoria=categoria_seleccionada)
 
@@ -135,8 +137,11 @@ def lista_productos(request):
         for producto in page_obj:
             producto.es_favorito_usuario = False
 
-    # Agregar la opción de "favoritos" en las categorías
-    categorias = list(Producto.CATEGORIAS) + [('favoritos', 'Mis Favoritos')]
+    # Agregar las opciones de filtros adicionales en las categorías
+    categorias = list(Producto.CATEGORIAS) + [
+        ('favoritos', 'Mis Favoritos'),
+        ('mis_productos', 'Mis Productos')
+    ]
 
     # Renderizar la plantilla con el contexto
     return render(request, 'index.html', {
@@ -147,6 +152,7 @@ def lista_productos(request):
         'ordenar_por': ordenar_por,
         'user': request.user
     })
+
 
 def editar_producto(request, pk):
     producto = get_object_or_404(Producto, pk=pk)
