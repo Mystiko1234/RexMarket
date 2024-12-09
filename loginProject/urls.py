@@ -19,7 +19,7 @@ from tkinter.font import names
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic.base import TemplateView
-from usuariosApp.views import publicar_producto, lista_productos,editar_producto, eliminar_producto, detalle_producto,VerifyEmailView, destacar_producto, toggle_favorito, eliminar_comentario, inbox, send_message, conversation_detail, start_conversation, conversations_list, get_conversation_messages, ProfileView, reportar_producto, lista_reportes, eliminar_reporte, eliminar_reporte_comentario, listar_reportes_comentarios, reportar_comentario
+from usuariosApp.views import publicar_producto, lista_productos,editar_producto, eliminar_producto, detalle_producto,VerifyEmailView, destacar_producto, toggle_favorito, eliminar_comentario, inbox, send_message, conversation_detail, start_conversation, conversations_list, get_conversation_messages, ProfileView, reportar_producto, lista_reportes, eliminar_reporte, eliminar_reporte_comentario, listar_reportes_comentarios, reportar_comentario, DeleteAccountView
 from usuariosApp.views import SignUpView
 from django.conf import settings
 from django.conf.urls.static import static
@@ -53,6 +53,7 @@ urlpatterns = [
     path('comentario/reportar/<int:comentario_id>/', reportar_comentario, name='reportar_comentario'),
     path('reportes/comentarios/', listar_reportes_comentarios, name='reportes_comentarios'),
     path('reporte/comentario/eliminar/<int:reporte_id>/', eliminar_reporte_comentario, name='eliminar_reporte_comentario'),
+    path('delete-account/', DeleteAccountView.as_view(), name='delete_account'),
 ]
 
 

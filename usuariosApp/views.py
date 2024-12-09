@@ -23,7 +23,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
 from django.contrib.auth.decorators import user_passes_test
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView
 
 
@@ -267,7 +267,7 @@ class VerifyEmailView(View):
             del request.session['user_data']
             del request.session['verification_code']
 
-            messages.success(request, '¡Cuenta creada exitosamente! Ahora puedes iniciar sesión.')
+            messages.success(request, '¡Cuenta creada exitosamente! Ahora puedes iniciar sesión')
             return redirect('login')
 
         messages.error(request, 'El código de verificación no es válido. Intenta de nuevo.')
@@ -530,3 +530,10 @@ def eliminar_reporte_comentario(request, reporte_id):
         reporte.delete()
         messages.success(request, 'El reporte ha sido eliminado correctamente.')
     return redirect('reportes_comentarios')
+
+
+class DeleteAccountView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        user.delete()
+        return redirect('home')

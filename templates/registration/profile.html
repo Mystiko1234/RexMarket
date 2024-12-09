@@ -33,6 +33,10 @@ background: linear-gradient(to right, rgba(246, 211, 101, 1), rgba(253, 160, 133
                               alt="Avatar" class="img-fluid my-5" style="width: 150px;" />
                           <h5 class="fs-3">{{ user.first_name }} {{ user.last_name }}</h5>
                           <p class="fs-5">Usuario registrado</p>
+                          <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                            Eliminar Cuenta
+                        </button>
+                        
                       </div>
                       <div class="col-md-8" style="background-color: rgb(242, 242, 242);">
                           <div class="card-body p-5">
@@ -72,6 +76,26 @@ background: linear-gradient(to right, rgba(246, 211, 101, 1), rgba(253, 160, 133
 </section>
 
 
-  
+  <!-- Modal de Confirmación -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteAccountModalLabel">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form method="post" action="{% url 'delete_account' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Eliminar Cuenta</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
