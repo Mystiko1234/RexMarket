@@ -8,7 +8,6 @@ from django.conf import settings
 
 
 
-
 class Producto(models.Model):
     CATEGORIAS = [
     ('Comida y Bebidas', 'Comida y Bebidas'),      
@@ -89,4 +88,25 @@ class Message(models.Model):
     is_read = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ['timestamp']  # Ordenar mensajes por fecha
+        ordering = ['timestamp']  
+
+
+class Reporte(models.Model):
+    producto = models.ForeignKey('Producto', on_delete=models.CASCADE, related_name='reportes')
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reportes')
+    motivo = models.TextField()
+    fecha_reporte = models.DateTimeField(auto_now_add=True)
+
+
+    def __str__(self):
+        return f"Reporte de {self.usuario.first_name} sobre {self.producto.nombre}"
+    
+
+class ReporteComentario(models.Model):
+    comentario = models.ForeignKey(Comentario, on_delete=models.CASCADE, related_name='reportes')
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    motivo = models.TextField()
+    fecha_creacion =models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Reporte de {self.usuario.username} sobre el comentario de {self.comentario.producto.nombre}'

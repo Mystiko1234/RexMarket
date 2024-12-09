@@ -61,9 +61,10 @@ Detalles del Producto
                         <div class="position-relative">
                             <!--reporte Comentario-->
                         {% if user.is_authenticated and comentario.usuario != user %}
-                        <button type="button" class="btn btn-danger position-absolute top-0 end-0 m-2" data-bs-toggle="modal" data-bs-target="#reportarModal" >
+                        <button type="button" class="btn btn-danger position-absolute top-0 end-0 m-2" data-bs-toggle="modal" data-bs-target="#reportarModal" data-comentario-id="{{ comentario.id }}">
                             <i class="bi bi-dash-circle"></i>
                         </button>
+                        
                     {% endif %}
                         <strong>{{ comentario.usuario.first_name }}</strong> - <small>{{ comentario.fecha_creacion|date:"d M Y" }}</small>
                         <p>Valoración: <span class="text-warning">★</span> {{ comentario.valoracion }} / 5</p>
@@ -130,7 +131,7 @@ Detalles del Producto
                 <h5 class="modal-title" id="reportarModalLabel-{{ producto.id }}">Reportar Producto</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form method="post">
+            <form id="formReporte-{{ producto.id }}" action="{% url 'reportar_producto' producto.id %}" method="post">
                 {% csrf_token %}
                 <div class="modal-body">
                     <p>¿Por qué deseas reportar este producto?</p>
@@ -148,24 +149,26 @@ Detalles del Producto
 <!-- Modal de Reporte Comentario -->
 <div class="modal fade" id="reportarModal" tabindex="-1" aria-labelledby="reportarModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="reportarModalLabel">Reportar Comentario</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reportarModalLabel">Reportar Comentario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% for comentario in comentarios %}
+    <p>Comentario ID: {{ comentario.id }}</p> <!-- Verifica que este valor no sea vacío -->
+    <form method="POST" action="{% url 'reportar_comentario' comentario.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="comentario_id" value="{{ comentario.id }}">
+        <label for="motivo">Motivo del reporte:</label>
+        <textarea name="motivo" id="motivo" rows="4" class="form-control" required></textarea>
+        <button type="submit" class="btn btn-danger mt-3">Reportar</button>
+    </form>
+{% endfor %}
+            </div>
         </div>
-        <div class="modal-body">
-            <form method="POST">
-                {% csrf_token %}
-                <input type="hidden" name="comentario_id" id="comentario_id">
-                <label for="motivo">Motivo del reporte:</label>
-                <textarea name="motivo" id="motivo" rows="4" class="form-control" required></textarea>
-                <button type="submit" class="btn btn-danger mt-3">Reportar</button>
-            </form>
-        </div>
-      </div>
     </div>
-  </div>
-  
+</div>
 
 {% endblock %}
 
@@ -191,12 +194,47 @@ Detalles del Producto
 </style>
 
 <script>
-    // Capturar el clic en el botón "Reportar" y pasar el comentario_id al modal
-    const reportarButtons = document.querySelectorAll('[data-bs-target="#reportarModal"]');
-    reportarButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const comentarioId = this.getAttribute('data-comentario-id');
-            document.getElementById('comentario_id').value = comentarioId;
+    document.querySelectorAll('form[id^="formReporte-"]').forEach(form => {
+    form.addEventListener('submit', function (e) {
+        e.preventDefault(); // Evita la recarga de la página.
+
+        const url = form.action;
+        const csrfToken = form.querySelector('[name="csrfmiddlewaretoken"]').value;
+        const motivo = form.querySelector('[name="motivo"]').value.trim();
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken
+            },
+            body: new URLSearchParams({ motivo })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message); // Notifica al usuario del éxito.
+                const modalId = form.closest('.modal').id;
+                document.getElementById(modalId).querySelector('.btn-close').click(); // Cierra el modal.
+            } else {
+                alert(data.message); // Notifica al usuario del error.
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ocurrió un error inesperado.');
         });
     });
+});
+
+
+// Capturar el clic en el botón "Reportar" y pasar el comentario_id al modal
+const reportarButtons = document.querySelectorAll('[data-bs-toggle="modal"]');
+reportarButtons.forEach(button => {
+    button.addEventListener('click', function () {
+        const comentarioId = this.getAttribute('data-comentario-id');
+        document.getElementById('comentario_id').value = comentarioId; // Asigna el valor al campo oculto
+    });
+});
+
 </script>

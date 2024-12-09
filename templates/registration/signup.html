@@ -12,8 +12,7 @@
     <!-- CSS de Bootstrap y tu archivo de estilos -->
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
 
     <!-- Enlace al archivo CSS -->
@@ -34,13 +33,12 @@
         <div class="white-panel">
             
             <div class="register-show">
-                <a href="{% url 'home' %}">X</a>
-                <!-- Formulario de Registro mejorado -->
+                <a href="{% url 'home' %}" aria-label="Ir al inicio" title="Ir al inicio" >
+                    <i class="bi bi-x-lg">
+                    </i>       
+                 </a>                <!-- Formulario de Registro mejorado -->
                 <h3 class="text-center">Registrarse</h3>
-
-                
-
-<form method="post" class="box">
+                <form method="post" class="box">
     {% csrf_token %}
 
     <div class="form-group">

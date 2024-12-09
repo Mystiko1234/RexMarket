@@ -28,7 +28,15 @@
                         <input type="text" name="verification_code" placeholder="Código de verificación"
                             class="form-control" required>
                     </div>
-                    <div class="alert alert-primary">Revisa el codigo de verificación en tu correo</div>
+                    <div class="alert alert-primary">
+                         {% if messages %}
+                            {% for message in messages %}
+                                <p class="{{ message.tags }}">{{ message }}</p>
+                            {% endfor %}
+                    {% endif %}
+                </div>
+                 
+
                     <button type="submit" class="btn btn-primary btn-block">Verificar</button>
                 </form>
             </div>

@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import CreateView
 from rest_framework.reverse import reverse_lazy
 from django.contrib.auth import login, authenticate
-from usuariosApp.models import Producto, Favorito, Comentario, Message, Conversation
+from usuariosApp.models import Producto, Favorito, Comentario, Message, Conversation, Reporte, ReporteComentario
 from usuariosApp.forms import ProductoForm, ComentarioForm, CustomUserCreationForm 
 from django.core.mail import send_mail
 from django.conf import settings
@@ -267,7 +267,7 @@ class VerifyEmailView(View):
             del request.session['user_data']
             del request.session['verification_code']
 
-            messages.success(request, '¡Correo verificado exitosamente! Ahora puedes iniciar sesión.')
+            messages.success(request, '¡Cuenta creada exitosamente! Ahora puedes iniciar sesión.')
             return redirect('login')
 
         messages.error(request, 'El código de verificación no es válido. Intenta de nuevo.')
@@ -449,3 +449,84 @@ class ProfileView(DetailView):
     def get_object(self):
         return self.request.user
     
+
+def lista_reportes(request):
+    reportes = Reporte.objects.select_related('producto', 'usuario').all().order_by('-fecha_reporte')
+    return render(request, 'reportes/lista_reportes.html', {'reportes': reportes})
+
+@login_required
+def reportar_producto(request, producto_id):
+    if request.method == 'POST':
+        producto = get_object_or_404(Producto, id=producto_id)
+        motivo = request.POST.get('motivo', '').strip()
+        
+        if motivo:
+            Reporte.objects.create(
+                producto=producto,
+                usuario=request.user,
+                motivo=motivo
+            )
+            messages.success(request, 'El reporte ha sido enviado correctamente.')
+            # Redirige a la vista del detalle del producto con el producto_id
+            return redirect('detalle_producto', producto_id=producto.id)
+        else:
+            messages.error(request, 'Debes ingresar un motivo para reportar el producto.')
+
+    return redirect('lista_productos') 
+
+
+@login_required
+def eliminar_reporte(request, reporte_id):
+    reporte = get_object_or_404(Reporte, id=reporte_id)
+    reporte.delete()
+    messages.success(request, 'El reporte ha sido eliminado correctamente.')
+    return redirect('lista_reportes') 
+
+
+
+from django.contrib import messages
+from django.shortcuts import redirect, get_object_or_404
+from .models import Comentario, ReporteComentario
+
+@login_required
+def reportar_comentario(request, comentario_id):
+    if request.method == 'POST':
+        motivo = request.POST.get('motivo')
+
+        if not motivo or len(motivo.strip()) < 5:  # Asegúrate de que el motivo no esté vacío
+            messages.error(request, "El motivo del reporte es obligatorio y debe tener al menos 5 caracteres.")
+            return redirect('home')
+
+        comentario = get_object_or_404(Comentario, id=comentario_id)  # Busca el comentario por su ID
+
+        # Crea el reporte
+        ReporteComentario.objects.create(
+            comentario=comentario,
+            usuario=request.user,
+            motivo=motivo
+        )
+
+        messages.success(request, 'El comentario ha sido reportado correctamente.')
+
+        # Redirige al detalle del producto
+        return redirect('detalle_producto', producto_id=comentario.producto.id)
+
+    return redirect('home')
+
+
+@login_required
+def listar_reportes_comentarios(request):
+    # Obtener todos los reportes de comentarios
+    reportes_comentarios = ReporteComentario.objects.all().order_by('-fecha_creacion')
+    return render(request, 'reportes/reportes_cometario.html', {
+        'reportes_comentarios': reportes_comentarios
+    })
+
+
+@login_required
+def eliminar_reporte_comentario(request, reporte_id):
+    if request.user.is_staff:
+        reporte = get_object_or_404(ReporteComentario, id=reporte_id)
+        reporte.delete()
+        messages.success(request, 'El reporte ha sido eliminado correctamente.')
+    return redirect('reportes_comentarios')

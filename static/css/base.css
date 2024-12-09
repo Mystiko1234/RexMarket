@@ -1,9 +1,7 @@
-/*Fondo imagen https://alvarotrigo.com/blog/animated-backgrounds-css/*/
-/*color de imagen https://ideakreativa.net/efectos-de-animacion-de-texto-css-ejemplos/*/
+/* Fondo imagen https://alvarotrigo.com/blog/animated-backgrounds-css*/
+/*color de imagen https://ideakreativa.net/efectos-de-animacion-de-texto-css-ejemplos*/
 @import url('https://fonts.googleapis.com/css2?family=Playwrite+CL:wght@100..400&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Source+Code+Pro:200');
-
-
 
 /* Asegurar que el html y body ocupen toda la altura */
 html, body {
@@ -19,16 +17,15 @@ html, body {
     font-style: normal;
     font-size: 100px;
     text-transform: uppercase;
-  }
-  
-  .rex {
+}
+
+.rex {
     color: rgb(255, 140, 0);
-  }
-  
-  .market {
+}
+
+.market {
     color: #000000; /* Negro para "market" */
-  }
-  
+}
 
 @keyframes textclip {
     to {
@@ -36,8 +33,7 @@ html, body {
     }
 }
 
-
- h1 {
+h1 {
     color: black;
     font-family: 'Source Code Pro', monospace;
     text-transform: uppercase;
@@ -64,10 +60,61 @@ html, body {
     body {
         background-size: 2000px;
     }
+
+    /* Navbar responsivo */
+    .navbar-nav {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .navbar-nav .nav-item {
+        width: auto;
+    }
+
+    .navbar-nav .nav-item li {
+        width: 100%;
+    }
+
+    .d-flex.justify-content-center {
+        flex-wrap: wrap;
+    }
+
+    .form-control {
+        width: 100%;
+    }
+
+    /* Ajuste del perfil en pantallas pequeñas */
+    .d-flex.align-items-center.justify-content-end {
+        width: 100%;
+        justify-content: flex-start;
+    }
 }
 
+/* Para asegurar que el footer se mantenga al fondo en pantallas pequeñas */
+body, html {
+  height: 100%;
+}
 
+.container.py-5 {
+  min-height: calc(100vh - 120px); /* Ajusta el espacio si es necesario */
+}
 
+/* Footer */
 footer {
     height: 100px; /* Ajusta según la altura real de tu footer */
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    background-color: #333;
+}
+
+footer .container {
+    justify-content: space-between;
+    align-items: center;
+}
+
+footer p {
+    margin: 0;
+    color: white;
 }
